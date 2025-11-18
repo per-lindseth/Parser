@@ -39,3 +39,9 @@
 
 # debug information files
 *.dwo
+
+# ignore foldere from root
+.vs/
+
+# ignore foldere at any level
+**/x64/
