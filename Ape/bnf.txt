@@ -1,0 +1,57 @@
+Key word are written in square brackets in the grammar like this: [if]
+Literals are written in single apostropfes in the grammar like this '+'
+other tokens are written a uppercase like IDENT and defined in the lexer
+an empty alternative in the grammar are written like this : _empty_
+
+Lexer
+--------------------------------------------------------------------------------------------------
+BOOL_LITERAL              ::= ^(true|false)$
+CHAR_LITERAL              ::= '(?:\\.|[^\\'])'
+STRING_LITERAL            ::= "([^"\\]|\\.)*"
+NUMBER_LITERAL            ::= (0[bB][01]+|0[oO][0-7]+|0[xX][0-9a-fA-F]+|[0-9]+)
+FLOAT_LITERAL             ::= [+-]?([0-9]*\.[0-9]+|[0-9]+\.[0-9]*)([eE][+-]?[0-9]+)?[fFdD]?
+IDENT                     ::= [A-Za-z_][A-Za-z0-9_]*
+					      
+Grammar:
+--------------------------------------------------------------------------------------------------					      
+<identifier list>            ::= IDENT ',' <identifier list> | IDENT	
+<typed identifier list>      ::= <typed identifier> ',' <typed identifier list> | <typed identifier>	
+<typed identifier>           ::= IDENT ':' <type expr>						  
+						  
+<type decl>                  ::= type IDENT '==' <type expr>
+<type expr>                  ::= <basic type> | <composed type> | IDENT
+<basic type>                 ::= [int] | [bool] | [char] | [string]
+<composed type>              ::= <enum type> | <product type> | <union type>
+						     
+<enum type>                  ::= '{' <identifier list> '}'					         
+<product type>               ::= '(' <typed identifier list> ')'					         
+<union type>                 ::= '<' <typed identifier> '*' <typed identifier list> '>'
+					         
+<func decl>                  ::= [func] IDENT <domain> ':' <type expr> '==' <expr>
+<domain>                     ::= '(' <typed identifier list> ')'| _empty_
+						     
+<expr>                       ::= IDENT | <literal> | <dot expr> | <typed expr> | <if expr> | <case expr> |
+                                 <func appl> | '(' expr list with comma> ')' | <union expr>  | 
+								 <unary expr> 
+								 
+<expr list with comma>       :: <expr> ',' <expr list with comma> | <expr>  
+<expr list with star>        :: <expr> '*' <expr rest with star> 
+<expr rest with star>        :: <expr> '*' <expr rest with star> | <expr>  
+
+<literal>                    ::= BOOL_LITERAL | CHAR_LITERAL | STRING_LITERAL | FLOAT_LITERAL								 
+<dot expr>                   ::= <expr> '.'
+<typed expr>                 ::= <expr> ':' <type expr>
+<if expr>                    ::= [if] <expr> [then] <expr> [else] <expr> [fi]
+<case expr>                  ::= [case] <expr> [of] <case alternative> <case end>
+<case alternative>           ::= <case discriminator> '->' <expr>
+<case discriminator>         ::= IDENT
+<case end>                   ::= [others] '->' <expr> [fo] | [fo]
+<func appl>                  ::= IDENT '(' <expr list with comma> ')' | IDENT								 
+<union expr>                 ::= '<' <expr list with star> '>'
+<unary expr>                 ::= '-' <expr> | '!' <expr> | <multiplicative  expr>
+<multiplicative  expr>       ::= <expr> '*' <expr> | <expr> '/' <expr> | <expr> '%' <expr> | <additive expr>
+<additive expr>              ::= <expr> '+' <expr> | <expr> '-' <expr> | <relational expr>
+<relational expr>            ::= <expr> '<' <expr> | <expr> '<=' <expr> | <expr> '>' <expr> | <expr> '>=' <expr> | <equality expr>
+<equality expr>              ::= <expr> '=' <expr> | <expr> '<>' <expr> | <logical asd expr>
+<logical and expr>           ::= <expr> '&' <expr> | <logical or expr>
+<logical or expr>            ::= <expr> '|' <expr>

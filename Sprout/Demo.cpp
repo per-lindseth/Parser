@@ -16,7 +16,9 @@ void Demo()
     Lexer lexer(code);
     Parser parser(lexer);
     auto statements = parser.parseProgram();
-
+    for(const auto& stmt: statements) {
+        stmt->print(cout);
+    }
     Compiler compiler;
     auto byteCode = compiler.compile(statements);
 

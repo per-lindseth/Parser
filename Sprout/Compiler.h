@@ -40,7 +40,6 @@ private:
         else if (const auto* ps = dynamic_cast<PrintStmt*>(s)) {
             compileExpr(ps->expr);
             byteCode.push_back({ OP_PRINT, 0 });
-            byteCode.push_back({ OP_POP, 0 });
         }
         else if (const auto* es = dynamic_cast<ExprStmt*>(s)) {
             compileExpr(es->expr);
